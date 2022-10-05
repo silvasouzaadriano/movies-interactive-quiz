@@ -6,7 +6,9 @@ const scoreContent = document.querySelector('.popup-content__score')
 
 const scoreMessageContent = document.querySelector('.popup-content__message')
 
-const correctAnswers = ['B','A','B','B','A','B']
+const correctAnswers = ['D','B','C','A']
+
+let score = 0
 
 const openPopup = () => popup.style.display = 'block'
 
@@ -20,28 +22,20 @@ const closePopup = event => {
     popup.style.display = 'none'
   }
 }
-
-const logPopupMessage = score => {
-  console.log(score)
+const showMessageScore = () => {
   switch (score) {
-    case 17:
+    case 25:
       scoreMessageContent.textContent = 'Você acertou somente uma questão, mas pode melhorar! Tente novamente!'
-      break;
-    case 33:
-      scoreMessageContent.textContent = 'Você acertou somente duas questões, mas pode melhorar! Tente novamente!'
       break;
     case 50:
       scoreMessageContent.textContent = 'Você está na média! Tente um pouco mais!'
       break;
-    case 67:
-        scoreMessageContent.textContent = 'Mais três e você será o campeão! Vamos, você vai conseguir!'
-        break;
-    case 83:
-          scoreMessageContent.textContent = 'Você está quase lá, falta somente uma! Vamos, você vai conseguir!'
-          break;        
+    case 75:
+      scoreMessageContent.textContent = 'Você está quase lá, falta somente uma! Vamos, você vai conseguir!'
+      break;        
     case 100:
-        scoreMessageContent.textContent = 'Você acertou tudo! Meus parabéns! :)'
-        break;
+      scoreMessageContent.textContent = 'Você acertou tudo! Meus parabéns! :)'
+      break;
     default:
       scoreMessageContent.textContent = ':( Infelizmente você não foi bem! Tente novamente!'
       break;
@@ -50,35 +44,44 @@ const logPopupMessage = score => {
   scoreContent.textContent = score
 }
 
-const processScore = userAnswers => {
-  let score = 0
-
-  userAnswers.forEach((userAnswer, index) => {
-    if (userAnswer === correctAnswers[index]) {
-      score += 16.66
-    }
+const showFinalScore = () => {
+  scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'smooth'
   })
 
-  score = Math.round(score)
-
-  logPopupMessage(score)
   openPopup()
+  showMessageScore()
+}
 
+const getUserAnswers = () => {
+  let userAnswers = []
+
+  correctAnswers.forEach((_, index) => {
+    const userAnswer = form[`inputQuestion${index + 1}`].value
+    userAnswers.push(userAnswer)
+  })
+
+  return userAnswers
+}
+
+const calculateUserScore = userAnswers => {
+  score = 0
+  userAnswers.forEach((userAnswer, index) => {
+    if (userAnswer === correctAnswers[index]) {
+      score += 25
+    }
+  })
 }
 
 const handleSubmit =  event => {
   event.preventDefault()
 
-  const userAnswers = [
-    event.target.inputQuestion1.value,
-    event.target.inputQuestion2.value,
-    event.target.inputQuestion3.value,
-    event.target.inputQuestion4.value,
-    event.target.inputQuestion5.value,
-    event.target.inputQuestion6.value
-  ]
+  const userAnswers = getUserAnswers()
 
-  processScore(userAnswers)
+  calculateUserScore(userAnswers)
+  showFinalScore()
 }
 
 popup.addEventListener('click', closePopup)
